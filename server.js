@@ -1,18 +1,17 @@
 const express = require("express");
+const connectDb = require("./config/dbConnection");
+const errorHandler = require("./middleware/errorHandler");
+const dotenv = require("dotenv").config();
+
+connectDb();
 const app = express();
-const port = 3004;
+const port = process.env.PORT || 5000;
 
-app.get("/", (req, res) => {
-  res.status(500).send("Hello World!");
-});
-
-app.get("/food", (req, res) => {
-  res.send("Hello World! Food is here");
-});
-
-app.get("/users", (req, res) => {
-  res.send("The users will go here");
-});
+//Whenever we need to use Middleware, we can make use of the app.use() method
+app.use(express.json());
+app.use("/api/contacts", require("./routes/contactRoutes"));
+app.use("/api/users", require("./routes/userRoutes"));
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
