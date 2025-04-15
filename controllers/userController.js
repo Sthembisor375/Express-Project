@@ -48,17 +48,17 @@ const loginUser = asyncHandler(async (req, res) => {
   }
   const user = await User.findOne({ email });
   //compare password with hashedpassword
-  if (use && (await bcrypt.compare(password, user.password))) {
+  if (user && (await bcrypt.compare(password, user.password))) {
     const accessToken = jwt.sign(
       {
         user: {
           username: user.username,
           email: user.email,
-          is: user.id,
+          id: user.id,
         },
       },
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1m" }
+      { expiresIn: "15m" }
     );
     res.status(200).json({ accessToken });
   } else {
@@ -71,7 +71,7 @@ const loginUser = asyncHandler(async (req, res) => {
 //@routr Post /api/users/current
 //@access private
 const currentUser = asyncHandler(async (req, res) => {
-  res.json({ message: "Current user information" });
+  res.json(req.user);
 });
 
 module.exports = { registerUser, loginUser, currentUser };
